@@ -10,6 +10,46 @@ const makeTableId = () => `tbl_${nanoid(8)}`
 const makeColId = () => `col_${nanoid(8)}`
 const makeRelId = () => `rel_${nanoid(8)}`
 
+const getLineText = (text, lineNumber) => {
+  if (!lineNumber || lineNumber < 1) return ''
+  return text.split(/\r?\n/)[lineNumber - 1] || ''
+}
+
+const replaceBareType = (text, typeName, replacement) => {
+  const typeRegex = new RegExp(`(?<!['"])\\b${typeName}\\b(?!['"])`, 'gi')
+  return text.replace(typeRegex, replacement)
+}
+
+const collapseNestedEnumWrappers = (text) => {
+  let normalized = text
+  let prev = ''
+
+  while (normalized !== prev) {
+    prev = normalized
+    normalized = normalized.replace(/ENUM\('ENUM\('([^']+)'\)'\)/gi, "ENUM('$1')")
+  }
+
+  return normalized
+}
+
+const formatParserError = (sqlText, err) => {
+  const line = err?.location?.start?.line
+  const column = err?.location?.start?.column
+
+  if (!line || !column) {
+    return `Loi cu phap SQL: ${err.message}`
+  }
+
+  const lineText = getLineText(sqlText, line)
+  const pointer = `${' '.repeat(Math.max(column - 1, 0))}^`
+
+  return [
+    `Loi cu phap SQL tai dong ${line}, cot ${column}: ${err.message}`,
+    lineText,
+    pointer
+  ].join('\n')
+}
+
 /**
  * Helper lấy string từ AST value
  */
@@ -51,31 +91,34 @@ export const parseSqlToErd = (sqlText, dialect = 'MYSQL') => {
   // Thay thế các type đặc thù của PG thành type chuẩn để parser đi lọt
   // Trick: Đưa vào ENUM('__original_type_name__') để giữ lại tên gốc hiển thị ERD
   customTypes.forEach(customType => {
-      const ctRegex = new RegExp(`\\b${customType}\\b`, 'gi')
-      cleanSql = cleanSql.replace(ctRegex, `ENUM('${customType}')`)
+      cleanSql = replaceBareType(cleanSql, customType, `ENUM('${customType}')`)
   })
 
   // Thay thế thêm một số Data Type lạ của PG mà node-sql-parser không hiểu
-  cleanSql = cleanSql.replace(/\bvector\(\d+\)/gi, "ENUM('vector')")
-  cleanSql = cleanSql.replace(/\bINET\b/gi, "ENUM('INET')")
-  cleanSql = cleanSql.replace(/\bMACADDR\b/gi, "ENUM('MACADDR')")
-  cleanSql = cleanSql.replace(/\bTIMESTAMPTZ\b/gi, "TIMESTAMP")
-  cleanSql = cleanSql.replace(/\bBIGSERIAL\b/gi, "BIGINT AUTO_INCREMENT") // node-sql-parser prefers mysql-like
-  cleanSql = cleanSql.replace(/\bUUID\b/gi, "ENUM('UUID')")
-  cleanSql = cleanSql.replace(/\bJSONB\b/gi, "JSON")
+  cleanSql = cleanSql.replace(/(?<!['"])vector\(\d+\)(?!['"])/gi, "ENUM('vector')")
+  cleanSql = replaceBareType(cleanSql, 'INET', "ENUM('INET')")
+  cleanSql = replaceBareType(cleanSql, 'MACADDR', "ENUM('MACADDR')")
+  cleanSql = replaceBareType(cleanSql, 'TIMESTAMPTZ', 'TIMESTAMP')
+  cleanSql = replaceBareType(cleanSql, 'BIGSERIAL', 'BIGINT AUTO_INCREMENT') // node-sql-parser prefers mysql-like
+  cleanSql = replaceBareType(cleanSql, 'UUID', "ENUM('UUID')")
+  cleanSql = replaceBareType(cleanSql, 'JSONB', 'JSON')
+  cleanSql = collapseNestedEnumWrappers(cleanSql)
 
   // Xoá bỏ các Type Cast đặc thủ của PostgreSQL như: DEFAULT '{}'::jsonb => DEFAULT '{}'
   // Parser sẽ báo lỗi ':' found nếu để nguyên
   cleanSql = cleanSql.replace(/::\w+/gi, '')
 
-  // DEBUG
-  import('fs').then(fs => fs.writeFileSync('debug_cleansql.sql', cleanSql))
+  if (process.env.SQL_PARSER_DEBUG === 'true') {
+    import('fs')
+      .then(fs => fs.writeFileSync('debug_cleansql.sql', cleanSql))
+      .catch(() => {})
+  }
 
   try {
     // Luôn luôn parse dưới mode MySQL vì mode này của parser ổn định nhất và dễ xử lý nhất
     ast = parser.astify(cleanSql, { database: 'MySQL' })
   } catch (err) {
-    throw new Error(`Lỗi cú pháp SQL: ${err.message}`)
+    throw new Error(formatParserError(cleanSql, err))
   }
 
   // Astify có thể trả về array hoặc object đơn
