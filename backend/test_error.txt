@@ -1,0 +1,275 @@
+FAILED ON:
+-- ============================================================
+-- MODULE 1: AUTH & RBAC
+-- ==========================================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "u" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE cameras (
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  camera_code           VARCHAR(50) NOT NULL UNIQU
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "c" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE camera_health_logs (
+  id            BIGSERIAL PRIMARY KEY,
+  camera_id     UUID NOT NULL REFERENCES cameras(id),
+  status      
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "c" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE zones (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  floorplan_id    UUID NOT NULL REFERENCES floorplans(id),
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "z" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE zone_configs (
+  id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  zone_id                   UUID NOT NULL
+ERROR: Lỗi cú pháp SQL: Expected "#", "(", ")", ",", "--", "/*", "AS", "AUTO_INCREMENT", "CHARACTER", "CHECK", "COLLATE", "COLUMN_FORMAT", "COMMENT", "CONSTRAINT", "DEFAULT", "GENERATED", "KEY", "NOT NULL", "NULL", "ON", "PRIMARY", "REFERENCES", "STORAGE", "UNIQUE", "UNSIGNED", "ZEROFILL", [ \t\n\r], or [0-9] but "[" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 4: FOOTFALL ANALYTICS
+-- ===================================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "g" found.
+
+FAILED ON:
+-- ----
+
+-- High-volume: partition by day recommended in production
+CREATE TABLE footfall_raw_events (
+  id           BIGSERIAL PRIMARY KEY,
+  camera_
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "f" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE footfall_minutely (
+  id             BIGSERIAL PRIMARY KEY,
+  gate_id        UUID NOT NULL REFERENCES gates(id),
+  bucket       
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "d" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 5: CUSTOMER PROFILE (CONSENT)
+-- ===========================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "c" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE customers (
+  id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  consent_id                UUID NOT NULL UN
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "c" found.
+
+FAILED ON:
+-- pgvector index for similarity search
+CREATE INDEX idx_face_embedding_hnsw ON face_embeddings
+  USING hnsw (embedding vector_cosine_ops)
+ERROR: Lỗi cú pháp SQL: Expected "#", "(", "--", ".", "/*", or [ \t\n\r] but "U" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE customer_visits (
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id           UUID NOT NULL REFE
+ERROR: Lỗi cú pháp SQL: Expected "#", ")", ",", "--", "/*", "AS", "AUTO_INCREMENT", "CHARACTER", "CHECK", "COLLATE", "COLUMN_FORMAT", "COMMENT", "CONSTRAINT", "DEFAULT", "GENERATED", "KEY", "NOT NULL", "NULL", "ON", "PRIMARY", "REFERENCES", "STORAGE", "UNIQUE", or [ \t\n\r] but "[" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 6: MARKETING DEMOGRAPHICS (ANONYMOUS)
+-- ===================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "a" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE demographic_aggregates (
+  id               BIGSERIAL PRIMARY KEY,
+  zone_id          UUID REFERENCES zones(id),
+  bucket       
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "a" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE heatmap_snapshots (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  floorplan_id     UUID NOT NULL REFERENCES f
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "h" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 8: JOURNEY & CONVERSION
+-- =================================================
+ERROR: Lỗi cú pháp SQL: Expected "#", ")", ",", "--", "/*", "AS", "AUTO_INCREMENT", "CHARACTER", "CHECK", "COLLATE", "COLUMN_FORMAT", "COMMENT", "CONSTRAINT", "DEFAULT", "GENERATED", "KEY", "NOT NULL", "NULL", "ON", "PRIMARY", "REFERENCES", "STORAGE", "UNIQUE", or [ \t\n\r] but "[" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 9: SECURITY & ALERTS
+-- ====================================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "a" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE security_alerts (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  rule_id          UUID REFERENCES alert_rules(
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "a" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 10: INCIDENT MANAGEMENT
+-- =================================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "i" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE incident_status_history (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  incident_id  UUID NOT NULL REFERENCES inc
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "i" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE incident_attachments (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  incident_id      UUID NOT NULL REFERENCE
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "a" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 11: VIDEO STORAGE & PLAYBACK
+-- ============================================
+ERROR: Lỗi cú pháp SQL: Expected "#", ")", ",", "--", "/*", "AS", "AUTO_INCREMENT", "CHARACTER", "CHECK", "COLLATE", "COLUMN_FORMAT", "COMMENT", "CONSTRAINT", "DEFAULT", "GENERATED", "KEY", "NOT NULL", "NULL", "ON", "PRIMARY", "REFERENCES", "STORAGE", "UNIQUE", or [ \t\n\r] but "[" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 12: WATCHLIST
+-- ===========================================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "w" found.
+
+FAILED ON:
+CREATE INDEX idx_watchlist_face_hnsw ON watchlist_face_refs
+  USING hnsw (embedding vector_cosine_ops)
+ERROR: Lỗi cú pháp SQL: Expected "#", "(", "--", ".", "/*", or [ \t\n\r] but "U" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE parking_slots (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  floor_id          UUID NOT NULL REFERENCES par
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "s" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE lpr_events (
+  id                       BIGSERIAL PRIMARY KEY,
+  camera_id                UUID NOT NULL REFERENCES cameras(id),
+
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "v" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE parking_events (
+  id            BIGSERIAL PRIMARY KEY,
+  slot_id       UUID NOT NULL REFERENCES parking_slots(id),
+  event_type
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "s" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE vehicle_violations (
+  id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  lpr_event_id       BIGINT REFERENCES lpr
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "v" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE vehicle_lists (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  plate_number VARCHAR(20) NOT NULL,
+  list_type    v
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "v" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 14: REPORTS & SCHEDULER
+-- =================================================
+ERROR: Lỗi cú pháp SQL: Expected "#", ")", ",", "--", "/*", "AS", "AUTO_INCREMENT", "CHARACTER", "CHECK", "COLLATE", "COLUMN_FORMAT", "COMMENT", "CONSTRAINT", "DEFAULT", "GENERATED", "KEY", "NOT NULL", "NULL", "ON", "PRIMARY", "REFERENCES", "STORAGE", "UNIQUE", or [ \t\n\r] but "[" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE report_jobs (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  template_id       UUID NOT NULL REFERENCES repor
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "r" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE report_runs (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id           UUID NOT NULL REFERENCES report_
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "r" found.
+
+FAILED ON:
+-- ============================================================
+-- MODULE 15: INTEGRATION & OPEN API
+-- ==============================================
+ERROR: Lỗi cú pháp SQL: Expected "#", ")", ",", "--", "/*", "AS", "AUTO_INCREMENT", "CHARACTER", "CHECK", "COLLATE", "COLUMN_FORMAT", "COMMENT", "CONSTRAINT", "DEFAULT", "GENERATED", "KEY", "NOT NULL", "NULL", "ON", "PRIMARY", "REFERENCES", "STORAGE", "UNIQUE", or [ \t\n\r] but "[" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE webhook_configs (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id         UUID REFERENCES api_client
+ERROR: Lỗi cú pháp SQL: Expected "#", ")", ",", "--", "/*", "AS", "AUTO_INCREMENT", "CHARACTER", "CHECK", "COLLATE", "COLUMN_FORMAT", "COMMENT", "CONSTRAINT", "DEFAULT", "GENERATED", "KEY", "NOT NULL", "NULL", "ON", "PRIMARY", "REFERENCES", "STORAGE", "UNIQUE", or [ \t\n\r] but "[" found.
+
+FAILED ON:
+-- ----
+
+CREATE TABLE erp_sync_jobs (
+  id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sync_type          erp_sync_type NOT NULL,
+  
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "->", "->>", ".", "/*", "BIGINT", "BINARY", "BIT", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "ENUM", "FLOAT", "GEOMETRY", "GEOMETRYCOLLECTION", "INT", "INTEGER", "JSON", "LINESTRING", "LONGTEXT", "MEDIUMINT", "MEDIUMTEXT", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", "NUMERIC", "POINT", "POLYGON", "SET", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "TINYINT", "TINYTEXT", "VARBINARY", "VARCHAR", "YEAR", "blob", "boolean", "longblob", "mediumblob", "tinyblob", or [ \t\n\r] but "e" found.
+
+FAILED ON:
+-- ============================================================
+-- TRIGGERS: auto-update updated_at
+-- ===============================================
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", "/*", "ALGORITHM", "DEFINER", "SQL", "VIEW", or [ \t\n\r] but "F" found.
+
+FAILED ON:
+END
+ERROR: Lỗi cú pháp SQL: Expected "#", "--", ".", "/*", ":=", "=", [ \t\n\r], or [A-Za-z0-9_$\x80-￿] but ";" found.
+
+FAILED ON:
+$$ LANGUAGE plpgsql
+ERROR: Lỗi cú pháp SQL: Expected "+", "-", [0-9], or [A-Za-z_] but "$" found.
+

@@ -1,0 +1,383 @@
+// backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// USERS
+// ─────────────────────────────────────────────
+model User {
+  id                Int       @id @default(autoincrement())
+  email             String    @unique @db.VarChar(255)
+  username          String    @unique @db.VarChar(100)
+  passwordHash      String    @map("password_hash") @db.VarChar(255)
+  avatarUrl         String?   @map("avatar_url") @db.VarChar(500)
+  plan              Plan      @default(FREE)
+  isActive          Boolean   @default(true) @map("is_active")
+  emailVerifiedAt   DateTime? @map("email_verified_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  projects             Project[]
+  projectVersions      ProjectVersion[]
+  projectCollaborators ProjectCollaborator[]
+  comments             Comment[]
+  refreshTokens        RefreshToken[]
+  emailVerifications   EmailVerification[]
+  passwordResets       PasswordReset[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// EMAIL VERIFICATIONS
+// Token 1 lần dùng để xác thực email
+// ─────────────────────────────────────────────
+model EmailVerification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  token     String   @unique @db.VarChar(128)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("email_verifications")
+}
+
+// ─────────────────────────────────────────────
+// PASSWORD RESETS
+// Token đặt lại mật khẩu, hết hạn sau 1 giờ
+// ─────────────────────────────────────────────
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  token     String   @unique @db.VarChar(128)
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_resets")
+}
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+}
+
+// ─────────────────────────────────────────────
+// REFRESH TOKENS
+// ─────────────────────────────────────────────
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  token     String   @unique @db.VarChar(512)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ─────────────────────────────────────────────
+// PROJECTS
+// Nullable userId = guest project (lưu theo guestToken cookie)
+// ─────────────────────────────────────────────
+model Project {
+  id             Int      @id @default(autoincrement())
+  userId         Int?     @map("user_id")
+  guestToken     String?  @map("guest_token") @db.VarChar(255)
+  name           String   @db.VarChar(255)
+  description    String?  @db.Text
+  slug           String   @unique @db.VarChar(300)
+  isPublic       Boolean  @default(false) @map("is_public")
+  thumbnailUrl   String?  @map("thumbnail_url") @db.VarChar(500)
+  defaultDialect Dialect  @default(MYSQL) @map("default_dialect")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user                 User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  diagrams             Diagram[]
+  projectVersions      ProjectVersion[]
+  sqlFiles             SqlFile[]
+  sharedLinks          SharedLink[]
+  projectCollaborators ProjectCollaborator[]
+
+  @@index([userId])
+  @@index([guestToken])
+  @@map("projects")
+}
+
+enum Dialect {
+  MYSQL
+  POSTGRESQL
+  SQLITE
+  NOSQL
+}
+
+// ─────────────────────────────────────────────
+// DIAGRAMS
+// Một project có thể có nhiều diagram (nhiều phiên bản schema)
+// canvasState: JSON lưu zoom, pan, layout tùy chỉnh
+// ─────────────────────────────────────────────
+model Diagram {
+  id           Int      @id @default(autoincrement())
+  projectId    Int      @map("project_id")
+  name         String   @default("Main Diagram") @db.VarChar(255)
+  canvasState  Json?    @map("canvas_state")
+  zoomLevel    Float    @default(1.0) @map("zoom_level")
+  panX         Int      @default(0) @map("pan_x")
+  panY         Int      @default(0) @map("pan_y")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  erdTables     ErdTable[]
+  relationships Relationship[]
+  comments      Comment[]
+
+  @@index([projectId])
+  @@map("diagrams")
+}
+
+// ─────────────────────────────────────────────
+// ERD TABLES
+// Mỗi bảng trong diagram ERD
+// posX, posY: vị trí trên canvas
+// color: màu header của bảng (hex string)
+// ─────────────────────────────────────────────
+model ErdTable {
+  id          Int      @id @default(autoincrement())
+  diagramId   Int      @map("diagram_id")
+  name        String   @db.VarChar(255)
+  displayName String?  @map("display_name") @db.VarChar(255)
+  posX        Int      @default(0) @map("pos_x")
+  posY        Int      @default(0) @map("pos_y")
+  color       String   @default("#6366f1") @db.VarChar(20)
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  diagram           Diagram        @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  columns           ErdColumn[]
+  fromRelationships Relationship[] @relation("FromTable")
+  toRelationships   Relationship[] @relation("ToTable")
+
+  @@index([diagramId])
+  @@map("erd_tables")
+}
+
+// ─────────────────────────────────────────────
+// ERD COLUMNS
+// Mỗi cột trong một bảng ERD
+// ─────────────────────────────────────────────
+model ErdColumn {
+  id              Int      @id @default(autoincrement())
+  tableId         Int      @map("table_id")
+  name            String   @db.VarChar(255)
+  dataType        String   @map("data_type") @db.VarChar(100)
+  isPrimary       Boolean  @default(false) @map("is_primary")
+  isUnique        Boolean  @default(false) @map("is_unique")
+  isNullable      Boolean  @default(true) @map("is_nullable")
+  isAutoIncrement Boolean  @default(false) @map("is_auto_increment")
+  isForeign       Boolean  @default(false) @map("is_foreign")
+  defaultValue    String?  @map("default_value") @db.VarChar(255)
+  comment         String?  @db.VarChar(500)
+  sortOrder       Int      @default(0) @map("sort_order")
+
+  // Relations
+  table              ErdTable       @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  fromRelationships  Relationship[] @relation("FromColumn")
+  toRelationships    Relationship[] @relation("ToColumn")
+
+  @@index([tableId])
+  @@map("erd_columns")
+}
+
+// ─────────────────────────────────────────────
+// RELATIONSHIPS
+// FK relationships giữa các bảng
+// relType: ONE_TO_ONE | ONE_TO_MANY | MANY_TO_MANY
+// ─────────────────────────────────────────────
+model Relationship {
+  id             Int          @id @default(autoincrement())
+  diagramId      Int          @map("diagram_id")
+  fromTableId    Int          @map("from_table_id")
+  fromColumnId   Int          @map("from_column_id")
+  toTableId      Int          @map("to_table_id")
+  toColumnId     Int          @map("to_column_id")
+  relType        RelationType @default(ONE_TO_MANY) @map("rel_type")
+  label          String?      @db.VarChar(255)
+  onDelete       FKAction     @default(RESTRICT) @map("on_delete")
+  onUpdate       FKAction     @default(CASCADE) @map("on_update")
+
+  // Relations
+  diagram    Diagram   @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  fromTable  ErdTable  @relation("FromTable", fields: [fromTableId], references: [id], onDelete: Cascade)
+  fromColumn ErdColumn @relation("FromColumn", fields: [fromColumnId], references: [id], onDelete: Cascade)
+  toTable    ErdTable  @relation("ToTable", fields: [toTableId], references: [id], onDelete: Cascade)
+  toColumn   ErdColumn @relation("ToColumn", fields: [toColumnId], references: [id], onDelete: Cascade)
+
+  @@index([diagramId])
+  @@map("relationships")
+}
+
+enum RelationType {
+  ONE_TO_ONE
+  ONE_TO_MANY
+  MANY_TO_MANY
+}
+
+enum FKAction {
+  CASCADE
+  RESTRICT
+  SET_NULL
+  NO_ACTION
+}
+
+// ─────────────────────────────────────────────
+// PROJECT VERSIONS
+// Snapshot toàn bộ diagram state để rollback
+// snapshot: JSON đầy đủ tables + columns + relationships + positions
+// ─────────────────────────────────────────────
+model ProjectVersion {
+  id            Int      @id @default(autoincrement())
+  projectId     Int      @map("project_id")
+  userId        Int?     @map("user_id")
+  snapshot      Json
+  message       String?  @db.VarChar(500)
+  versionNumber Int      @map("version_number")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@map("project_versions")
+}
+
+// ─────────────────────────────────────────────
+// SQL FILES
+// Lưu raw SQL text theo dialect
+// Mỗi lần export/save SQL tạo một record mới
+// ─────────────────────────────────────────────
+model SqlFile {
+  id        Int      @id @default(autoincrement())
+  projectId Int      @map("project_id")
+  content   String   @db.LongText
+  dialect   Dialect
+  filename  String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("sql_files")
+}
+
+// ─────────────────────────────────────────────
+// SHARED LINKS
+// Token-based sharing, có thể set expiry và permission
+// ─────────────────────────────────────────────
+model SharedLink {
+  id         Int        @id @default(autoincrement())
+  projectId  Int        @map("project_id")
+  token      String     @unique @db.VarChar(64)
+  permission SharePerm  @default(VIEW)
+  expiresAt  DateTime?  @map("expires_at")
+  viewCount  Int        @default(0) @map("view_count")
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@map("shared_links")
+}
+
+enum SharePerm {
+  VIEW
+  EDIT
+}
+
+// ─────────────────────────────────────────────
+// PROJECT COLLABORATORS
+// Nhiều user cùng làm việc trên một project
+// ─────────────────────────────────────────────
+model ProjectCollaborator {
+  id        Int            @id @default(autoincrement())
+  projectId Int            @map("project_id")
+  userId    Int            @map("user_id")
+  role      CollabRole     @default(VIEWER)
+  joinedAt  DateTime       @default(now()) @map("joined_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_collaborators")
+}
+
+enum CollabRole {
+  VIEWER
+  EDITOR
+  ADMIN
+}
+
+// ─────────────────────────────────────────────
+// TEMPLATES
+// Các diagram mẫu được cung cấp sẵn hoặc do user tạo
+// isOfficial: true = built-in template của app
+// ─────────────────────────────────────────────
+model Template {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  category    String   @db.VarChar(100)
+  canvasData  Json     @map("canvas_data")
+  sqlContent  String   @map("sql_content") @db.LongText
+  dialect     Dialect  @default(MYSQL)
+  isOfficial  Boolean  @default(false) @map("is_official")
+  useCount    Int      @default(0) @map("use_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("templates")
+}
+
+// ─────────────────────────────────────────────
+// COMMENTS
+// Annotation ghim trên diagram, có tọa độ x/y
+// tableId nullable: comment gắn vào bảng cụ thể hoặc free-floating
+// ─────────────────────────────────────────────
+model Comment {
+  id         Int      @id @default(autoincrement())
+  diagramId  Int      @map("diagram_id")
+  userId     Int?     @map("user_id")
+  tableId    Int?     @map("table_id")
+  content    String   @db.Text
+  posX       Int      @default(0) @map("pos_x")
+  posY       Int      @default(0) @map("pos_y")
+  isResolved Boolean  @default(false) @map("is_resolved")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  diagram Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([diagramId])
+  @@map("comments")
+}

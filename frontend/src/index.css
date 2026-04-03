@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ===== LIGHT MODE ===== */
+    --background: 0 0% 100%;
+    --surface: 210 40% 98%;
+    --border: 214 32% 91%;
+    --text-main: 222 47% 11%;
+    --text-muted: 215 16% 47%;
+    --glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --primary-500: #6366f1;
+  }
+
+  /* ===== DARK MODE ===== */
+  .dark {
+    --background: 231 35% 7%;
+    --surface: 227 31% 12%;
+    --border: 225 19% 21%;
+    --text-main: 210 40% 98%;
+    --text-muted: 215 20% 60%;
+    --glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --primary-500: #6366f1;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-background text-textMain transition-colors duration-300 font-sans;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  /* Custom scrollbar - Dark */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--text-muted));
+  }
+}
+
+@layer components {
+  /* ===== Glass Panel ===== */
+  .glass-panel {
+    @apply rounded-2xl border shadow-lg;
+    background: var(--glass-gradient);
+    border-color: var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Dark mode glass panel */
+  .dark .glass-panel {
+    @apply bg-surface/60;
+  }
+
+  .light .glass-panel {
+    @apply bg-white/70;
+  }
+
+  /* ===== React Flow Overrides ===== */
+  .react-flow__background {
+    background-color: transparent !important;
+  }
+
+  .react-flow__controls {
+    @apply rounded-xl overflow-hidden shadow-xl;
+    border: 1px solid var(--glass-border) !important;
+  }
+
+  .react-flow__controls-button {
+    background: hsl(var(--surface)) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    fill: hsl(var(--text-muted)) !important;
+  }
+
+  .react-flow__controls-button:hover {
+    background: hsl(var(--surface)) !important;
+    fill: hsl(var(--text-main)) !important;
+  }
+
+  .react-flow__minimap {
+    @apply rounded-xl overflow-hidden;
+    border: 1px solid var(--glass-border) !important;
+    background: hsl(var(--surface)) !important;
+  }
+
+  /* ===== Focus Visible Ring ===== */
+  :focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Shimmer animation for hero gradient */
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s ease infinite;
+  }
+
+  /* Fade-in slide-up for stagger animations */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fadeSlideUp {
+    animation: fadeSlideUp 0.5s ease forwards;
+  }
+}
